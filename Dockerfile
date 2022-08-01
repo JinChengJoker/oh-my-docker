@@ -41,5 +41,9 @@ RUN echo '' >> /root/.zshrc &&\
 ENV SHELL /bin/zsh
 
 # 将 vim 设为默认编辑器
-ENV EDITOR=vim
-ENV VISUAL=vim
+# ENV EDITOR=vim
+# ENV VISUAL=vim
+
+# 配置语言环境
+RUN apt install language-pack-zh-hans -y
+ENV LANG zh_CN.UTF-8
