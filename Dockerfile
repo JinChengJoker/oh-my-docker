@@ -37,6 +37,9 @@ RUN echo '' >> /root/.zshrc &&\
 		echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /root/.zshrc &&\
 		echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /root/.zshrc
 
+# 下载 zsh 主题 powerlevel10k
+RUN git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
 # 将 zsh 设为默认 shell
 ENV SHELL /bin/zsh
 
@@ -47,3 +50,8 @@ ENV SHELL /bin/zsh
 # 配置语言环境
 RUN apt install language-pack-zh-hans -y
 ENV LANG zh_CN.UTF-8
+
+# 配置时区
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+RUN apt install tzdata -y
