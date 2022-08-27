@@ -8,7 +8,7 @@ docker build . -t jinchengjoker/oh-my-docker:tagname
 ## 启动容器
 
 ```bash
-docker run -it --name oh-my-docker jinchengjoker/oh-my-docker:tagname
+docker run -d --name oh-my-docker jinchengjoker/oh-my-docker:tagname
 ```
 
 
