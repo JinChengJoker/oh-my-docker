@@ -10,48 +10,35 @@ RUN apt-get update
 # 安装软件
 RUN yes | apt-get install git zsh curl
 
-# 配置 git
-ENV NAME "jincheng"
-ENV EMAIL "jinchengjoker@foxmail.com"
-RUN git config --global user.name $NAME && git config --global user.email $EMAIL
-
 # 安装 OhMyZsh
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# 安装 nvm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+SHELL ["/bin/zsh", "-c"]
 
-# 配置 nvm nrm
-SHELL ["/bin/bash", "--login", "-c"]
-ENV NVM_DIR /root/.nvm
-ENV NODE_VERSION 16
-RUN source $NVM_DIR/nvm.sh &&\
-		nvm install $NODE_VERSION && nvm use $NODE_VERSION &&\
+# 安装 nvm
+RUN git clone https://github.com/nvm-sh/nvm.git ~/.nvm
+
+# 安装 node
+ARG NODE_VERSION=16
+RUN . ~/.nvm/nvm.sh &&\
+		nvm install $NODE_VERSION &&\
+		nvm use $NODE_VERSION &&\
 		corepack enable &&\
-		npm install -g nrm &&\
+		npm add -g nrm &&\
 		nrm use taobao
 
-# 配置 zsh
-RUN echo '' >> /root/.zshrc &&\
-		echo 'export NVM_DIR="$HOME/.nvm"' >> /root/.zshrc &&\
-		echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /root/.zshrc &&\
-		echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> /root/.zshrc
-
-# 下载 zsh 主题 powerlevel10k
-RUN git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+# 配置 nvm
+RUN echo '' >> ~/.zshrc &&\
+		echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc &&\
+		echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> ~/.zshrc &&\
+		echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> ~/.zshrc
 
 # 将 zsh 设为默认 shell
-ENV SHELL /bin/zsh
-
-# 将 vim 设为默认编辑器
-# ENV EDITOR=vim
-# ENV VISUAL=vim
+ENV SHELL=/bin/zsh
 
 # 配置语言环境
-RUN apt install language-pack-zh-hans -y
-ENV LANG zh_CN.UTF-8
+ENV LANG=C.UTF-8
 
 # 配置时区
-ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Shanghai
-RUN apt install tzdata -y
+RUN DEBIAN_FRONTEND=noninteractive apt install tzdata
