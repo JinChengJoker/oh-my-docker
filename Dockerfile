@@ -18,14 +18,15 @@ SHELL ["/bin/zsh", "-c"]
 # 安装 nvm
 RUN git clone https://github.com/nvm-sh/nvm.git ~/.nvm
 
-# 安装 node
+# 安装 node、配置包管理工具
 ARG NODE_VERSION=16
 RUN . ~/.nvm/nvm.sh &&\
 		nvm install $NODE_VERSION &&\
 		nvm use $NODE_VERSION &&\
 		corepack enable &&\
 		npm add -g nrm &&\
-		nrm use taobao
+		nrm use taobao &&\
+		yarn config set registry https://registry.npmmirror.com/
 
 # 配置 nvm
 RUN echo '' >> ~/.zshrc &&\
